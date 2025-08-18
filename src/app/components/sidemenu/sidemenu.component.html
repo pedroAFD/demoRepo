@@ -1,0 +1,184 @@
+<mat-sidenav-container tabindex="0"  (keydown.enter)="sidenav.toggle()" class="example-container" aria-label="Main navigation container">
+    <mat-sidenav
+      #sidenav
+      mode="side"
+      [(opened)]="isSidenavOpened"
+      role="navigation"
+      aria-label="Side navigation menu"
+      [attr.aria-expanded]="isSidenavOpened"
+      aria-controls="main-content">
+      @if(selectedTask) {
+        <div class="sidemenu-form-container">
+        <h2>{{ isCreatingNewTask ? 'Create Task' : 'Edit Task' }}</h2>
+        <form>
+            <mat-form-field appearance="outline" class="full-width" aria-label="Edit/Create Title">
+                <mat-label>Title</mat-label>
+                <input matInput [(ngModel)]="selectedTask.title" name="title" required>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width"aria-label="Edit/Create Description">
+                <mat-label>Description</mat-label>
+                <textarea matInput [(ngModel)]="selectedTask.description" name="description" required></textarea>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width"aria-label="Edit/Create Status">
+                <mat-label>Status</mat-label>
+                <mat-select [(ngModel)]="selectedTask.status" name="status" required>
+                <mat-option value="Backlog">Backlog</mat-option>
+                <mat-option value="Pending">Pending</mat-option>
+                <mat-option value="In Progress">In Progress</mat-option>
+                <mat-option value="In Review">In Review</mat-option>
+                <mat-option value="Done">Done</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width" aria-label="Edit/Create Priority">
+                <mat-label>Priority</mat-label>
+                <mat-select [(ngModel)]="selectedTask.priority" name="priority" required>
+                <mat-option value="Low">Low</mat-option>
+                <mat-option value="Medium">Medium</mat-option>
+                <mat-option value="High">High</mat-option>
+                <mat-option value="Critical">Critical</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width" aria-label="Edit/Create Due Date">
+                <mat-label>Due Date</mat-label>
+                <input
+                matInput
+                [(ngModel)]="selectedTask.dueDate"                
+                name="dueDate"
+                type="date"
+                required>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width" aria-label="Edit/Create Tags">
+                <mat-label>Tags (comma separated)</mat-label>
+                <input matInput [(ngModel)]="tagsString" name="tagsString" (change)="updateTags()">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width" aria-label="Edit/Create Requester">
+                <mat-label>Requester</mat-label>
+                <mat-select [(ngModel)]="selectedTask.assignee" name="assignee" required>
+                <mat-option *ngFor="let user of users" [value]="user">{{ user.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="button" (click)="saveTask()" aria-label="Save Task">
+                {{ isCreatingNewTask ? 'Create' : 'Save' }}
+            </button>
+            <button mat-button type="button" (click)="cancelEdit()" aria-label="Cancel">
+                Cancel
+            </button>
+        </form>
+        </div>
+    } @else {
+        <div class="sidemenu-empty">
+            <p>Select a task row to edit.</p>
+            <button mat-raised-button color="primary" type="button" (click)="createNewTask()" aria-label="Create New Task">
+                Create New Task
+            </button>
+            <button
+                mat-button
+                (click)="sidenav.toggle()"                
+                aria-controls="sidenav"
+                [attr.aria-expanded]="isSidenavOpened"
+                aria-label="Toggle side navigation">
+                {{ isSidenavOpened ? 'Close Sidenav (Enter)' : 'Open Sidenav(Enter)' }}
+            </button>
+        </div>
+    }
+    </mat-sidenav>
+
+    <mat-sidenav-content id="main-content" aria-label="Main content area">
+        <div [ngClass]="{'toolbar-buttons': isMobileAndSidenavOpen()}">
+            <button
+                mat-raised-button
+                color="primary"
+                type="button"
+                (click)="createNewTask()"
+                aria-label="Create New Task">
+                Create New Task
+            </button>
+            <button
+                mat-button
+                (click)="sidenav.toggle()"                
+                aria-controls="sidenav"
+                [attr.aria-expanded]="isSidenavOpened"
+                aria-label="Toggle side navigation">
+                {{ isSidenavOpened ? 'Close Sidenav(Enter)' : 'Open Sidenav(Enter)' }}
+            </button>
+        </div>
+
+        <div class="search-bar">
+            <mat-form-field appearance="outline" aria-label="Task search field">
+            <mat-label>Search Tasks</mat-label>
+            <input matInput [(ngModel)]="filterValue" (keyup)="applyFilter()" placeholder="Title or Requester" aria-label="Search by title or requester">
+            </mat-form-field>
+        </div>
+
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" aria-label="Tasks table">
+
+        <!-- UID Column -->
+        <ng-container matColumnDef="uid">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col" aria-label="Task ID">ID</th>
+            <td mat-cell *matCellDef="let task" aria-label="Task ID">{{ task.uid }}</td>
+        </ng-container>
+
+        <!-- Title Column -->
+        <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col" aria-label="Task Title">Title</th>
+            <td mat-cell *matCellDef="let task" aria-label="Task Title">{{ task.title }}</td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col" aria-label="Task Description">Description</th>
+            <td mat-cell *matCellDef="let task" aria-label="Task Description">{{ task.description }}</td>
+        </ng-container>
+
+        <!-- Requester Column -->
+        <ng-container matColumnDef="requester">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col" aria-label="Requester">Requester</th>
+            <td mat-cell *matCellDef="let task" aria-label="Requester">{{ task.assignee?.name }}</td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col" aria-label="Task Status">Status</th>
+            <td mat-cell *matCellDef="let task" aria-label="Task Status">{{ task.status }}</td>
+        </ng-container>
+
+        <!-- Priority Column -->
+        <ng-container matColumnDef="priority">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col" aria-label="Task Priority">Priority</th>
+            <td mat-cell *matCellDef="let task" aria-label="Task Priority">{{ task.priority }}</td>
+        </ng-container>
+
+        <!-- Due Date Column -->
+        <ng-container matColumnDef="dueDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col" aria-label="Due Date">Due Date</th>
+            <td mat-cell *matCellDef="let task" aria-label="Due Date">{{ task.dueDate | date }}</td>
+        </ng-container>
+
+        <!-- Tags Column -->
+        <ng-container matColumnDef="tags">
+            <th mat-header-cell *matHeaderCellDef scope="col" aria-label="Task Tags">Tags</th>
+            <td mat-cell *matCellDef="let task" aria-label="Task Tags">{{ task.tags?.join(', ') }}</td>
+        </ng-container>
+
+        <!-- Created At Column -->
+        <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col" aria-label="Created At">Created</th>
+            <td mat-cell *matCellDef="let task" aria-label="Created At">{{ task.createdAt | date }}</td>
+        </ng-container>
+
+        <!-- Updated At Column -->
+        <ng-container matColumnDef="updatedAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col" aria-label="Updated At">Updated</th>
+            <td mat-cell *matCellDef="let task" aria-label="Updated At">{{ task.updatedAt | date }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row
+            *matRowDef="let row; columns: displayedColumns;"
+            (click)="onRowClick(row)"
+            aria-label="Task row">
+        </tr>
+    </table>
+    <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" aria-label="Table pagination"></mat-paginator>
+    </mat-sidenav-content>
+</mat-sidenav-container>
