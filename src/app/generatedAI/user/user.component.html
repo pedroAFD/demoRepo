@@ -1,1 +1,95 @@
-<p>user works!</p>
+<!--this was AI Generated-->
+<mat-sidenav-container tabindex="0" class="example-container" aria-label="Main navigation container">
+  <mat-sidenav
+    #sidenav
+    [(opened)]="isSidenavOpened"
+    role="navigation"
+    aria-label="Side navigation menu"
+    [attr.aria-expanded]="isSidenavOpened"
+    aria-controls="main-content">
+    @if(selectedUser) {
+      <div class="user-form-container">
+        <h2>{{ isCreatingNewUser ? 'Create User' : 'Edit User' }}</h2>
+        <form>
+          <mat-form-field class="full-width" appearance="outline" aria-label="Edit/Create Name">
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="selectedUser.name" name="name" required>
+          </mat-form-field>
+          <mat-form-field class="full-width" appearance="outline" aria-label="Edit/Create Email">
+            <mat-label>Email</mat-label>
+            <input matInput [(ngModel)]="selectedUser.email" name="email" required>
+          </mat-form-field>
+          <mat-form-field class="full-width" appearance="outline" aria-label="Edit/Create Avatar URL">
+            <mat-label>Avatar URL</mat-label>
+            <input matInput [(ngModel)]="selectedUser.avatarUrl" name="avatarUrl">
+          </mat-form-field>
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="button" (click)="saveUser()" aria-label="Save User">
+              {{ isCreatingNewUser ? 'Create' : 'Save' }}
+            </button>
+            <button mat-button type="button" (click)="cancelEdit()" aria-label="Cancel">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    } @else {
+      <div class="user-empty">
+        <p>Select a user row to edit.</p>
+        <button mat-raised-button color="primary" type="button" (click)="createNewUser()" aria-label="Create New User">
+          Create New User
+        </button>
+      </div>
+    }
+  </mat-sidenav>
+
+  <mat-sidenav-content id="main-content" aria-label="Main content area">
+    <div class="toolbar-buttons">
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="createNewUser()"
+        aria-label="Create New User">
+        Create New User
+      </button>
+      <button
+        mat-button
+        (click)="sidenav.toggle()"
+        aria-controls="sidenav"
+        [attr.aria-expanded]="isSidenavOpened"
+        aria-label="Toggle side navigation">
+        {{ isSidenavOpened ? 'Close Sidenav' : 'Open Sidenav' }}
+      </button>
+    </div>
+
+    <div class="search-bar">
+      <mat-form-field appearance="outline" aria-label="User search field">
+        <mat-label>Search Users</mat-label>
+        <input matInput [(ngModel)]="filterValue" (keyup)="applyFilter()" placeholder="Name or Email" aria-label="Search by name or email">
+      </mat-form-field>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" aria-label="Users table">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let user">{{ user.id }}</td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+        <td mat-cell *matCellDef="let user">{{ user.name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+        <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+      </ng-container>
+      <ng-container matColumnDef="avatarUrl">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Avatar</th>
+        <td mat-cell *matCellDef="let user">{{ user.avatarUrl }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClick(row)" tabindex="0"></tr>
+    </table>
+    <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" aria-label="Table pagination"></mat-paginator>
+  </mat-sidenav-content>
+</mat-sidenav-container>

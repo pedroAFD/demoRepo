@@ -1,0 +1,44 @@
+//Ai Generated
+@import '../../styles/_tokens.scss';
+
+.example-container {
+  min-height: var(--container-min-height, 100vh);
+  box-sizing: border-box;
+}
+
+.user-form-container {
+  padding: var(--space-16, 16px);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #000);
+}
+
+.user-empty {
+  padding: var(--space-16, 16px);
+  background: var(--color-surface, #fff);
+  color: var(--color-muted, #9aa9bd);
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: var(--space-16, 16px);
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-8, 8px);
+  margin-top: var(--space-16, 16px);
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: var(--space-8, 8px);
+  margin-bottom: var(--space-16, 16px);
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.search-bar {
+  margin: var(--space-16, 16px) 0;
+}
