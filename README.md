@@ -20,6 +20,10 @@ A simple Angular Material app for managing tasks. You can view, sort, filter, cr
    ```
     npx ng test --include src/app/components/sidemenu/sidemenu.component.spec.ts
    ```
+5. Demo is available at
+    ```
+    https://pedroafd.github.io/demoRepo/
+    ```
 
 ## Completed Extensions
 
