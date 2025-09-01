@@ -22,7 +22,7 @@ A simple Angular Material app for managing tasks. You can view, sort, filter, cr
    ```
 5. Demo is available at
     ```
-    https://pedroafd.github.io/demoRepo/
+    https://demo-repo-5meyadnpy-paneybas-projects.vercel.app/tasks
     ```
 
 ## Completed Extensions
